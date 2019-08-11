@@ -1,0 +1,17 @@
+import java.util.*
+
+/*
+SpeedNotifier registers listeners, and notifies those listeners with relevant speed change info
+ */
+
+class SpeedNotifier {
+    val listeners = LinkedList<SpeedListener>()
+
+    fun register(listener : SpeedListener) {
+        listeners.add(listener)
+    }
+
+    fun updateSpeed(newSpeed : Int) {
+        listeners.forEach {updateSpeed(newSpeed)}
+    }
+}
