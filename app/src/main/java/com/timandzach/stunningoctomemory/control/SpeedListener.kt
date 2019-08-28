@@ -1,3 +1,5 @@
+package com.timandzach.stunningoctomemory
+
 /*
 SpeedListener registers with a SpeedNotifier
  */
