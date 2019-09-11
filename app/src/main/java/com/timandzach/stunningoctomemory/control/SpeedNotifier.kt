@@ -1,6 +1,8 @@
 package com.timandzach.stunningoctomemory
 
+import android.location.GpsStatus
 import android.Manifest
+import android.annotation.SuppressLint
 import java.util.*
 import android.app.Activity
 import android.content.Context
@@ -14,10 +16,21 @@ import android.os.Bundle
 SpeedNotifier registers listeners, and notifies those listeners with relevant speed change info
  */
 
-class SpeedNotifier : Activity(), LocationListener {
+class SpeedNotifier(val act : Activity) : LocationListener, GpsStatus.Listener {
 
-    val UNIQUE_REQUEST_FINE_LOCATION_ID = 780917890
-    val locationManager = this.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    lateinit var locationManager : LocationManager
+
+    @SuppressLint("MissingPermission")
+    fun onCreate() {
+        locationManager = act.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
+        //Register to get location updates
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, this)
+    }
+
+    init {
+        onCreate()
+    }
 
     override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -31,9 +44,13 @@ class SpeedNotifier : Activity(), LocationListener {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
+    override fun onGpsStatusChanged(p0: Int) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     var carWasDriving = false
-    val SPEED_THRESHOLD = 20
-    val STOPPED_SPEED = 1.0f
+    val SPEED_THRESHOLD = 0.5f
+    val STOPPED_SPEED = 0.25f
 
     override fun onLocationChanged(location: Location?) {
         if (location != null) {
@@ -50,33 +67,6 @@ class SpeedNotifier : Activity(), LocationListener {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        //Check that we have permission to access the user's location. Request that permission if needed
-        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), UNIQUE_REQUEST_FINE_LOCATION_ID)
-
-            return
-        }
-
-        //Register to get location updates
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, this)
-    }
-
-    //If we get permission to access the uesr's location, register to get location updates
-    //TODO: Could be made more robust, but we shouldn't ever have more than one permission being granted
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        if (requestCode == UNIQUE_REQUEST_FINE_LOCATION_ID) {
-            if (permissions.size > 0 && permissions[0] == Manifest.permission.ACCESS_FINE_LOCATION) {
-                if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0,
-                        0f, this)
-                }
-            }
-        }
-    }
-
     val listeners = LinkedList<SpeedListener>()
 
     fun register(listener : SpeedListener) {
@@ -84,6 +74,8 @@ class SpeedNotifier : Activity(), LocationListener {
     }
 
     fun updateLocation(lat : Double, long : Double) {
-        listeners.forEach {updateLocation(lat, long)}
+        for(l in listeners) {
+            l.updateSpeed(lat, long)
+        }
     }
 }
