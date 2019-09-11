@@ -14,6 +14,7 @@ import android.location.LocationManager
 import android.os.Build
 import android.app.Activity
 import android.content.Context
+import android.content.SharedPreferences
 import android.view.Menu
 import android.widget.CheckBox
 import android.widget.CompoundButton
@@ -23,6 +24,11 @@ import android.widget.TextView
 class MainActivity : Activity(), SpeedListener {
 
     val UNIQUE_REQUEST_FINE_LOCATION_ID = 780917890
+    val PREFS_FILENAME = "com.timandzach.stunningoctomemory.prefs"
+    var prefs: SharedPreferences? = null
+
+    var latitude = 0.0
+    var longitude = 0.0
 
     lateinit var speedNotifier : SpeedNotifier
 
@@ -30,7 +36,13 @@ class MainActivity : Activity(), SpeedListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        this.updateSpeed(0.0, 0.0)
+        // setting up the shared preferences file and pulling old values
+        prefs = this.getSharedPreferences(PREFS_FILENAME,0)
+        this.latitude = Double.fromBits(prefs!!.getLong("latitude",(0.0).toBits()))
+        this.longitude = Double.fromBits(prefs!!.getLong("longitude",(0.0).toBits()))
+
+
+        this.updateSpeed(this.latitude,this.longitude)
 
         //Check that we have permission to access the user's location. Request that permission if needed
         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -65,6 +77,18 @@ class MainActivity : Activity(), SpeedListener {
     }
 
     override fun updateSpeed(latitude: Double, longitude: Double) {
+
+        // first we store the value locally in case
+        this.latitude = latitude
+        this.longitude = longitude
+
+        // we write to shared prefs for later
+        val editor = this.prefs!!.edit()
+        editor.putLong("latitude", this.latitude.toBits())
+        editor.putLong("longitude", this.longitude.toBits())
+        editor.apply()
+
+        // then we format to write to screen
         val fmt = Formatter(StringBuilder())
         fmt.format(Locale.US, "%5.1f,%5.1f", latitude, longitude)
         var strCurrentSpeed = fmt.toString()
