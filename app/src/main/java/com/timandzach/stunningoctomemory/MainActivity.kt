@@ -20,8 +20,13 @@ import android.widget.CheckBox
 import android.widget.CompoundButton
 import android.widget.CompoundButton.OnCheckedChangeListener
 import android.widget.TextView
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import android.util.Log
 
 class MainActivity : Activity(), SpeedListener {
+
+    private val TAG: String = MainActivity::class.java.simpleName
 
     val UNIQUE_REQUEST_FINE_LOCATION_ID = 780917890
     val PREFS_FILENAME = "com.timandzach.stunningoctomemory.prefs"
@@ -45,11 +50,13 @@ class MainActivity : Activity(), SpeedListener {
         this.updateSpeed(this.latitude,this.longitude)
 
         //Check that we have permission to access the user's location. Request that permission if needed
-        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), UNIQUE_REQUEST_FINE_LOCATION_ID)
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Log.d(TAG, "needs permission")
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), UNIQUE_REQUEST_FINE_LOCATION_ID)
 
             return
         }
+        Log.d(TAG, "has permission")
 
         speedNotifier = SpeedNotifier(this)
 
@@ -63,8 +70,8 @@ class MainActivity : Activity(), SpeedListener {
         if (requestCode == UNIQUE_REQUEST_FINE_LOCATION_ID) {
             if (permissions.size > 0 && permissions[0] == Manifest.permission.ACCESS_FINE_LOCATION) {
                 if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d(TAG, "got permission")
                     speedNotifier = SpeedNotifier(this)
-
                     speedNotifier.register(this)
                 }
             }
