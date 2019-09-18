@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Stunning Octo Memory</string>
+    <string name="title_activity_main">Stunning Octo Memory</string>
     <string name="title_activity_maps">Map</string>
+    <string name="button_goto_activity_maps">Go To Map</string>
     <string name="com.timandzach.stunningoctomemory.preference_latitude"></string>
     <string name="com.timandzach.stunningoctomemory.preference_longitude"></string>
 </resources>

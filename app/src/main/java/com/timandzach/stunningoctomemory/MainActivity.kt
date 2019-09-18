@@ -14,12 +14,14 @@ import android.location.LocationManager
 import android.os.Build
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.view.Menu
 import android.widget.CheckBox
 import android.widget.CompoundButton
 import android.widget.CompoundButton.OnCheckedChangeListener
 import android.widget.TextView
+import kotlinx.android.synthetic.main.activity_main.*
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import android.util.Log
@@ -61,6 +63,13 @@ class MainActivity : Activity(), SpeedListener {
         speedNotifier = SpeedNotifier(this)
 
         speedNotifier.register(this)
+
+        btnStartMapsActivity.setOnClickListener {
+            val intent = Intent(this, MapsActivity::class.java)
+            intent.putExtra("latitude", this.latitude)
+            intent.putExtra("longitude", this.longitude)
+            startActivity(intent)
+        }
     }
 
     //If we get permission to access the uesr's location, register to get location updates

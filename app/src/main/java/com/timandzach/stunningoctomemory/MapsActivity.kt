@@ -14,9 +14,19 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
 
+    private var latitude = 0.0
+    private var longitude = 0.0
+    private lateinit var latLng: LatLng
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
+
+        latitude = intent.getDoubleExtra("latitude", -34.0)
+        longitude = intent.getDoubleExtra("longitude", 151.0)
+
+        this.latLng = LatLng(latitude,longitude)
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
@@ -36,8 +46,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap = googleMap
 
         // Add a marker in Sydney and move the camera
-        val sydney = LatLng(-34.0, 151.0)
-        mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+        mMap.addMarker(MarkerOptions().position(latLng).title("You parked here"))
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng))
     }
 }
