@@ -11,7 +11,7 @@ class LocationUpdater : SpeedListener {
     var longitudeString: String = "111"
         private set
 
-    override fun updateSpeed(latitude: Double, longitude: Double) {
+    override fun updateSpeed(latitude: Double, longitude: Double, speed : Float, driving : Boolean) {
         this.latitude = latitude
         this.longitude = longitude
     }
