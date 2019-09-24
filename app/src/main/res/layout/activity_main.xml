@@ -24,4 +24,17 @@
             android:layout_height="wrap_content"
             android:text="000.0 miles/hour"
             android:textAppearance="?android:attr/textAppearanceLarge" />
+    <TextView
+            android:id="@+id/txtNumBroadcasts"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="000.0 miles/hour"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+            android:id="@+id/txtNumReceives"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="000.0 miles/hour"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 </LinearLayout>

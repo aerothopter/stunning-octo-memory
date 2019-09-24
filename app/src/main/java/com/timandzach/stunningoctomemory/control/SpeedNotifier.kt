@@ -6,6 +6,11 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.PowerManager
+import androidx.legacy.content.WakefulBroadcastReceiver
+import androidx.core.content.ContextCompat.getSystemService
+
+
 
 /*
 SpeedNotifier registers listeners, and notifies those listeners with relevant speed change info
@@ -13,6 +18,7 @@ SpeedNotifier registers listeners, and notifies those listeners with relevant sp
 
 //class SpeedNotifier(val act : Activity) : LocationListener {
 class SpeedNotifier : BroadcastReceiver {
+
 
     constructor(act : Activity) : super()  {
         val filter : IntentFilter = IntentFilter(LocationService.BROADCAST_ACTION)
@@ -55,18 +61,24 @@ class SpeedNotifier : BroadcastReceiver {
      * @param context The Context in which the receiver is running.
      * @param intent The Intent being received.
      */
+
+    var numReceives = 0
+
     override fun onReceive(context: Context?, intent: Intent?) {
         var lat : Double = 0.0
         var lon : Double = 0.0
         var speed : Float = 0.0f
+        var numBroadcasts =  0
 
         if (intent != null) {
             if(intent.action == LocationService.BROADCAST_ACTION ) {
                 lat = intent.getDoubleExtra("Latitude", 0.0)
                 lon = intent.getDoubleExtra("Longitude", 0.0)
                 speed = intent.getFloatExtra("Speed", 0.0f)
+                numBroadcasts = intent.getIntExtra("NumBroadcasts", 0)
+                numReceives++
 
-                onLocationChanged(lat, lon, speed)
+                onLocationChanged(lat, lon, speed, numBroadcasts)
             }
         }
     }
@@ -76,7 +88,7 @@ class SpeedNotifier : BroadcastReceiver {
     val SPEED_THRESHOLD = 0.2f
     val STOPPED_SPEED = 0.05f
 
-    fun onLocationChanged(latitude : Double, longitude : Double, speed : Float) {
+    fun onLocationChanged(latitude : Double, longitude : Double, speed : Float, numBroadcasts : Int) {
 
         //TODO Delete this
         //updateLocation(latitude, longitude)
@@ -92,7 +104,7 @@ class SpeedNotifier : BroadcastReceiver {
                 carIsDriving = true
             }
 
-        updateLocation(latitude, longitude, speed, carIsDriving)
+        updateLocation(latitude, longitude, speed, carIsDriving, numBroadcasts)
 
     }
 
@@ -112,9 +124,9 @@ class SpeedNotifier : BroadcastReceiver {
 //        }
 //    }
 
-    fun updateLocation(lat : Double, long : Double, speed : Float, driving : Boolean) {
+    fun updateLocation(lat : Double, long : Double, speed : Float, driving : Boolean, numBroadcasts: Int) {
         for(l in listeners) {
-            l.updateSpeed(lat, long, speed, driving)
+            l.updateSpeed(lat, long, speed, driving, numBroadcasts, numReceives)
         }
     }
 }

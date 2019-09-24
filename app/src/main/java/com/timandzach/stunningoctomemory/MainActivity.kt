@@ -13,18 +13,12 @@ import android.content.Intent
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.databinding.adapters.TextViewBindingAdapter.setText
-import android.content.BroadcastReceiver
-import android.content.Context
-import androidx.core.content.ContextCompat.getSystemService
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-
-
 
 
 class MainActivity : Activity(), SpeedListener {
 
     val UNIQUE_REQUEST_FINE_LOCATION_ID = 780917890
+    var service_running = false
 
     lateinit var speedNotifier : SpeedNotifier
 
@@ -32,7 +26,7 @@ class MainActivity : Activity(), SpeedListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        this.updateSpeed(0.0, 0.0, 0.0f, false)
+        this.updateSpeed(0.0, 0.0, 0.0f, false, 0, 0)
 
         //Check that we have permission to access the user's location. Request that permission if needed
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -70,12 +64,16 @@ class MainActivity : Activity(), SpeedListener {
     }
 
     fun initSpeedNotifications () {
-        val serviceIntent = Intent(this, LocationService::class.java)
-        startService(serviceIntent)
+        if (!service_running) {
+            val serviceIntent = Intent(this, LocationService::class.java)
+            startService(serviceIntent)
 
-        speedNotifier = SpeedNotifier(this)
+            speedNotifier = SpeedNotifier(this)
 
-        speedNotifier.register(this)
+            speedNotifier.register(this)
+
+            service_running = true
+        }
     }
 
     override fun finish() {
@@ -86,10 +84,12 @@ class MainActivity : Activity(), SpeedListener {
 
         speedNotifier.unregister(this)
 
+        service_running = false
+
         System.exit(0)
     }
 
-    override fun updateSpeed(latitude: Double, longitude: Double, speed : Float, driving : Boolean) {
+    override fun updateSpeed(latitude: Double, longitude: Double, speed : Float, driving : Boolean, numBroadcasts : Int, numReceives : Int) {
         val fmt = Formatter(StringBuilder())
         fmt.format(Locale.US, "%5.6f,%5.6f", latitude, longitude)
         var strCurrentSpeed = fmt.toString()
@@ -110,5 +110,11 @@ class MainActivity : Activity(), SpeedListener {
         else {
             txtDriving.text = "Stopped"
         }
+
+        val txtBroadcasts = this.findViewById(R.id.txtNumBroadcasts) as TextView
+        txtBroadcasts.text = numBroadcasts.toString()
+
+        val txtReceives = this.findViewById(R.id.txtNumReceives) as TextView
+        txtReceives.text = numReceives.toString()
     }
 }
