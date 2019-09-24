@@ -24,7 +24,7 @@ class MainActivity : Activity(), SpeedListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        this.updateSpeed(0.0, 0.0, 0.0f, false, 0, 0)
+        this.updateSpeed(0.0, 0.0)
 
         //Check that we have permission to access the user's location. Request that permission if needed
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -87,7 +87,11 @@ class MainActivity : Activity(), SpeedListener {
         System.exit(0)
     }
 
-    override fun updateSpeed(latitude: Double, longitude: Double, speed : Float, driving : Boolean, numBroadcasts : Int, numReceives : Int) {
+    override fun updateSpeed(latitude: Double, longitude: Double) {
+        //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun getDebugInfo(latitude: Double, longitude: Double, speed : Float, driving : Boolean, numBroadcasts : Int, numReceives : Int) {
         val fmt = Formatter(StringBuilder())
         fmt.format(Locale.US, "%5.6f,%5.6f", latitude, longitude)
         var strCurrentSpeed = fmt.toString()
