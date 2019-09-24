@@ -1,10 +1,8 @@
 package com.timandzach.stunningoctomemory
 
 import android.os.Bundle
-
 import java.util.Formatter
 import java.util.Locale
-
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager

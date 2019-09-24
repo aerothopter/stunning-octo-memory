@@ -5,5 +5,6 @@ SpeedListener registers with a SpeedNotifier
  */
 
 interface SpeedListener {
-    fun updateSpeed(latitude: Double, longitude: Double, speed : Float, driving : Boolean, numBroadcasts : Int, numReceives : Int)
+    fun updateSpeed(latitude: Double, longitude: Double, speed : Float,
+                    driving : Boolean, numBroadcasts : Int, numReceives : Int)
 }

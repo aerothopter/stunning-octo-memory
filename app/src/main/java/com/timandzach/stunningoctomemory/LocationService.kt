@@ -11,7 +11,6 @@ import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
 import android.widget.Toast
-
 import androidx.core.app.ActivityCompat
 import android.R
 import android.app.*
@@ -48,7 +47,7 @@ class LocationService: Service() {
         b.setOngoing(true)
             .setContentTitle("StunningOctoMemory")
             .setContentText("Running in the foreground")
-            .setSmallIcon(android.R.drawable.sym_def_app_icon)
+            .setSmallIcon(R.drawable.sym_def_app_icon)
             .setTicker("Ticker")
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

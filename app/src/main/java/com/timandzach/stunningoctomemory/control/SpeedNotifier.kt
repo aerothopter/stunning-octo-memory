@@ -6,11 +6,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.os.PowerManager
-import androidx.legacy.content.WakefulBroadcastReceiver
-import androidx.core.content.ContextCompat.getSystemService
-
-
 
 /*
 SpeedNotifier registers listeners, and notifies those listeners with relevant speed change info
