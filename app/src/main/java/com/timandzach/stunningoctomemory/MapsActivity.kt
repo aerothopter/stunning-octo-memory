@@ -1,5 +1,6 @@
 package com.timandzach.stunningoctomemory
 
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 
@@ -14,9 +15,25 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
 
+    val PREFS_FILENAME = "com.timandzach.stunningoctomemory.prefs"
+
+    var prefs: SharedPreferences? = null
+
+    var latitude = 0.0
+    var longitude = 0.0
+    private lateinit var parkingMarker: LatLng
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
+
+        // setting up the shared preferences file and pulling old values
+        prefs = this.getSharedPreferences(PREFS_FILENAME,0)
+        this.latitude = Double.fromBits(prefs!!.getLong("latitude",(0.0).toBits()))
+        this.longitude = Double.fromBits(prefs!!.getLong("longitude",(0.0).toBits()))
+
+        this.parkingMarker = LatLng(this.latitude, this.longitude)
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
@@ -35,9 +52,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
-        // Add a marker in Sydney and move the camera
-        val sydney = LatLng(-34.0, 151.0)
-        mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+        mMap.addMarker(MarkerOptions().position(this.parkingMarker).title("Your Parking Spot"))
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(this.parkingMarker,18.0f))
+
     }
 }

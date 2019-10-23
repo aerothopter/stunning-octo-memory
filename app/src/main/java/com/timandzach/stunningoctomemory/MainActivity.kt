@@ -1,17 +1,11 @@
 package com.timandzach.stunningoctomemory
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-
 import java.util.Formatter
 import java.util.Locale
-
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
-import android.location.Location
-import android.location.LocationManager
-import android.os.Build
 import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
@@ -19,16 +13,24 @@ import android.view.Menu
 import android.widget.CheckBox
 import android.widget.CompoundButton
 import android.widget.CompoundButton.OnCheckedChangeListener
+import android.content.Intent
+import android.content.SharedPreferences
 import android.widget.TextView
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+
 
 class MainActivity : Activity(), SpeedListener {
 
     val UNIQUE_REQUEST_FINE_LOCATION_ID = 780917890
     val PREFS_FILENAME = "com.timandzach.stunningoctomemory.prefs"
+
+    var service_running = false
     var prefs: SharedPreferences? = null
 
     var latitude = 0.0
     var longitude = 0.0
+
 
     lateinit var speedNotifier : SpeedNotifier
 
@@ -41,69 +43,104 @@ class MainActivity : Activity(), SpeedListener {
         this.latitude = Double.fromBits(prefs!!.getLong("latitude",(0.0).toBits()))
         this.longitude = Double.fromBits(prefs!!.getLong("longitude",(0.0).toBits()))
 
-
-        this.updateSpeed(this.latitude,this.longitude)
+        this.updateSpeed(this.latitude, this.longitude, 0.0f, false, 0, 0)
 
         //Check that we have permission to access the user's location. Request that permission if needed
-        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), UNIQUE_REQUEST_FINE_LOCATION_ID)
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), UNIQUE_REQUEST_FINE_LOCATION_ID)
 
+            val txtCurrentSpeed = this.findViewById(R.id.txtCurrentSpeed) as TextView
+            txtCurrentSpeed.text = "This application requires access to the user's location"
             return
         }
 
-        speedNotifier = SpeedNotifier(this)
-
-        speedNotifier.register(this)
+        initSpeedNotifications()
     }
 
-    //If we get permission to access the uesr's location, register to get location updates
-    //TODO: Could be made more robust, but we shouldn't ever have more than one permission being granted
+    //If we get permission to access the uesr's location and background location, register to get location updates
     @SuppressLint("MissingPermission")
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        if (requestCode == UNIQUE_REQUEST_FINE_LOCATION_ID) {
-            if (permissions.size > 0 && permissions[0] == Manifest.permission.ACCESS_FINE_LOCATION) {
-                if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    speedNotifier = SpeedNotifier(this)
 
-                    speedNotifier.register(this)
+        var resultIndex = 0
+
+        for (p in permissions) {
+            if (p == Manifest.permission.ACCESS_FINE_LOCATION) {
+                if (grantResults[resultIndex] == PackageManager.PERMISSION_GRANTED) {
+                    initSpeedNotifications()
+
+                    return
+                } else {
+                    val txtCurrentSpeed = this.findViewById(R.id.txtCurrentSpeed) as TextView
+                    txtCurrentSpeed.text = "This application requires access to the user's location"
                 }
             }
+            else {
+                resultIndex++
+            }
+        }
+    }
+
+    fun initSpeedNotifications () {
+        if (!service_running) {
+            val serviceIntent = Intent(this, LocationService::class.java)
+            startService(serviceIntent)
+
+            speedNotifier = SpeedNotifier(this)
+
+            speedNotifier.register(this)
+
+            service_running = true
         }
     }
 
     override fun finish() {
         super.finish()
+
+        val serviceIntent = Intent(this, LocationService::class.java)
+        stopService(serviceIntent)
+
+        speedNotifier.unregister(this)
+
+        service_running = false
+
         System.exit(0)
     }
 
-    override fun updateSpeed(latitude: Double, longitude: Double) {
+    override fun updateSpeed(latitude: Double, longitude: Double, speed : Float, driving : Boolean, numBroadcasts : Int, numReceives : Int) {
 
-        // first we store the value locally in case
         this.latitude = latitude
         this.longitude = longitude
 
-        // we write to shared prefs for later
         val editor = this.prefs!!.edit()
         editor.putLong("latitude", this.latitude.toBits())
         editor.putLong("longitude", this.longitude.toBits())
         editor.apply()
 
-        // then we format to write to screen
         val fmt = Formatter(StringBuilder())
-        fmt.format(Locale.US, "%5.1f,%5.1f", latitude, longitude)
+        fmt.format(Locale.US, "%5.6f,%5.6f", latitude, longitude)
         var strCurrentSpeed = fmt.toString()
         strCurrentSpeed = strCurrentSpeed.replace(' ', '0')
 
         var strUnits = "lat/long"
 
-        val txtCurrentSpeed = this.findViewById(R.id.txtCurrentSpeed) as TextView
+        val txtCurrentSpeed = this.findViewById(R.id.txtLatLong) as TextView
         txtCurrentSpeed.text = "$strCurrentSpeed $strUnits"
+
+        val txtSpeed = this.findViewById(R.id.txtCurrentSpeed) as TextView
+        txtSpeed.text = speed.toString()
+
+        val txtDriving = this.findViewById(R.id.txtDriving) as TextView
+        if (driving) {
+            txtDriving.text = "Driving"
+        }
+        else {
+            txtDriving.text = "Stopped"
+        }
+
+        val txtBroadcasts = this.findViewById(R.id.txtNumBroadcasts) as TextView
+        txtBroadcasts.text = numBroadcasts.toString()
+
+        val txtReceives = this.findViewById(R.id.txtNumReceives) as TextView
+        txtReceives.text = numReceives.toString()
     }
-
-    companion object {
-
-        internal var UNIQUE_PERMISSIONS_ID = 75213
-    }
-
-
 }
