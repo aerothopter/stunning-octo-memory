@@ -60,17 +60,13 @@ class SpeedNotifier : BroadcastReceiver {
     var numReceives = 0
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        var lat : Double = 0.0
-        var lon : Double = 0.0
-        var speed : Float = 0.0f
-        var numBroadcasts =  0
 
         if (intent != null) {
             if(intent.action == LocationService.BROADCAST_ACTION ) {
-                lat = intent.getDoubleExtra("Latitude", 0.0)
-                lon = intent.getDoubleExtra("Longitude", 0.0)
-                speed = intent.getFloatExtra("Speed", 0.0f)
-                numBroadcasts = intent.getIntExtra("NumBroadcasts", 0)
+                val lat = intent.getDoubleExtra("Latitude", 0.0)
+                val lon = intent.getDoubleExtra("Longitude", 0.0)
+                val speed = intent.getFloatExtra("Speed", 0.0f)
+                val numBroadcasts = intent.getIntExtra("NumBroadcasts", 0)
                 numReceives++
 
                 onLocationChanged(lat, lon, speed, numBroadcasts)

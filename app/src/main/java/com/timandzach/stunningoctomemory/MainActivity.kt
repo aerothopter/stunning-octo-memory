@@ -14,7 +14,6 @@ import android.widget.CheckBox
 import android.widget.CompoundButton
 import android.widget.CompoundButton.OnCheckedChangeListener
 import android.content.Intent
-import android.content.SharedPreferences
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
