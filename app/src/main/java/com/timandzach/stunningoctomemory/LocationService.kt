@@ -12,7 +12,6 @@ import android.os.IBinder
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
-import android.R
 import android.app.*
 import android.graphics.Color
 import androidx.core.app.NotificationCompat
@@ -35,7 +34,7 @@ class LocationService: Service() {
 
         intent = Intent(BROADCAST_ACTION)
 
-        val notificationIntent = Intent(this, MainActivity::class.java)
+        val notificationIntent = Intent(this, MapsActivity::class.java)
 
         val pendingIntent = PendingIntent.getActivity(
             this, 0,
@@ -46,9 +45,11 @@ class LocationService: Service() {
 
         b.setOngoing(true)
             .setContentTitle("StunningOctoMemory")
-            .setContentText("Running in the foreground")
-            .setSmallIcon(R.drawable.sym_def_app_icon)
+            .setContentText("Tap to see your last parking spot")
+            .setSmallIcon(R.drawable.directions_car_24px)
             .setTicker("Ticker")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(pendingIntent)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             b.setChannelId(createNotificationChannel("zachandtim", "timandzach"))
