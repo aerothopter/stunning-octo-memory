@@ -14,6 +14,8 @@ import android.widget.CheckBox
 import android.widget.CompoundButton
 import android.widget.CompoundButton.OnCheckedChangeListener
 import android.content.Intent
+import android.view.View
+import android.widget.Button
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -36,6 +38,12 @@ class MainActivity : Activity(), SpeedListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val quit_button = this.findViewById(R.id.quitButton) as Button
+
+        quit_button.setOnClickListener( {
+            finish()
+        })
 
         // setting up the shared preferences file and pulling old values
         prefs = this.getSharedPreferences(PREFS_FILENAME,0)
@@ -98,9 +106,9 @@ class MainActivity : Activity(), SpeedListener {
         val serviceIntent = Intent(this, LocationService::class.java)
         stopService(serviceIntent)
 
-        speedNotifier.unregister(this)
-
         service_running = false
+
+        speedNotifier.unregister(this)
 
         System.exit(0)
     }
