@@ -76,7 +76,7 @@ class SpeedNotifier : BroadcastReceiver {
 
 
     var carIsDriving = false
-    val SPEED_THRESHOLD = 0.2f
+    val SPEED_THRESHOLD = 6f
     val STOPPED_SPEED = 0.05f
 
     fun onLocationChanged(latitude : Double, longitude : Double, speed : Float, numBroadcasts : Int) {
