@@ -8,6 +8,7 @@ import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.app.Activity
 import android.content.Intent
+import android.content.SharedPreferences
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -16,7 +17,14 @@ import androidx.core.content.ContextCompat
 class MainActivity : Activity(), SpeedListener {
 
     val UNIQUE_REQUEST_FINE_LOCATION_ID = 780917890
+    val PREFS_FILENAME = "com.timandzach.stunningoctomemory.prefs"
+
     var service_running = false
+    var prefs: SharedPreferences? = null
+
+    var latitude = 0.0
+    var longitude = 0.0
+
 
     lateinit var speedNotifier : SpeedNotifier
 
@@ -24,7 +32,12 @@ class MainActivity : Activity(), SpeedListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        this.updateSpeed(0.0, 0.0)
+        // setting up the shared preferences file and pulling old values
+        prefs = this.getSharedPreferences(PREFS_FILENAME,0)
+        this.latitude = Double.fromBits(prefs!!.getLong("latitude",(0.0).toBits()))
+        this.longitude = Double.fromBits(prefs!!.getLong("longitude",(0.0).toBits()))
+
+        this.updateSpeed(this.latitude, this.longitude)
 
         //Check that we have permission to access the user's location. Request that permission if needed
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -88,7 +101,13 @@ class MainActivity : Activity(), SpeedListener {
     }
 
     override fun updateSpeed(latitude: Double, longitude: Double) {
-        //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        this.latitude = latitude
+        this.longitude = longitude
+
+        val editor = this.prefs!!.edit()
+        editor.putLong("latitude", this.latitude.toBits())
+        editor.putLong("longitude", this.longitude.toBits())
+        editor.apply()
     }
 
     override fun getDebugInfo(latitude: Double, longitude: Double, speed : Float, driving : Boolean, numBroadcasts : Int, numReceives : Int) {
