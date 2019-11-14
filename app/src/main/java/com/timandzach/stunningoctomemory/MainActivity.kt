@@ -50,7 +50,7 @@ class MainActivity : Activity(), SpeedListener {
         this.latitude = Double.fromBits(prefs!!.getLong("latitude",(0.0).toBits()))
         this.longitude = Double.fromBits(prefs!!.getLong("longitude",(0.0).toBits()))
 
-        this.updateSpeed(this.latitude, this.longitude, 0.0f, false, 0, 0)
+        this.updateSpeed(this.latitude, this.longitude)
 
         //Check that we have permission to access the user's location. Request that permission if needed
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -113,8 +113,7 @@ class MainActivity : Activity(), SpeedListener {
         System.exit(0)
     }
 
-    override fun updateSpeed(latitude: Double, longitude: Double, speed : Float, driving : Boolean, numBroadcasts : Int, numReceives : Int) {
-
+    override fun updateSpeed(latitude: Double, longitude: Double) {
         this.latitude = latitude
         this.longitude = longitude
 
@@ -122,7 +121,9 @@ class MainActivity : Activity(), SpeedListener {
         editor.putLong("latitude", this.latitude.toBits())
         editor.putLong("longitude", this.longitude.toBits())
         editor.apply()
+    }
 
+    override fun getDebugInfo(latitude: Double, longitude: Double, speed : Float, driving : Boolean, numBroadcasts : Int, numReceives : Int) {
         val fmt = Formatter(StringBuilder())
         fmt.format(Locale.US, "%5.6f,%5.6f", latitude, longitude)
         var strCurrentSpeed = fmt.toString()

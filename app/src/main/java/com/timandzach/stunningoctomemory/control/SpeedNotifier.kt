@@ -80,13 +80,9 @@ class SpeedNotifier : BroadcastReceiver {
     val STOPPED_SPEED = 0.05f
 
     fun onLocationChanged(latitude : Double, longitude : Double, speed : Float, numBroadcasts : Int) {
-
-        //TODO Delete this
-        //updateLocation(latitude, longitude)
-
             //If the vehicle was driving and has stopped, report the location
             if(carIsDriving && speed <= STOPPED_SPEED) {
-//                updateLocation(latitude, longitude)
+                updateLocation(latitude, longitude)
                 carIsDriving = false
             }
 
@@ -95,7 +91,7 @@ class SpeedNotifier : BroadcastReceiver {
                 carIsDriving = true
             }
 
-        updateLocation(latitude, longitude, speed, carIsDriving, numBroadcasts)
+        updateDebugInfo(latitude, longitude, speed, carIsDriving, numBroadcasts)
 
     }
 
@@ -109,15 +105,15 @@ class SpeedNotifier : BroadcastReceiver {
         listeners.remove(listener)
     }
 
-//    fun updateLocation(lat : Double, long : Double) {
-//        for(l in listeners) {
-//            l.updateSpeed(lat, long)
-//        }
-//    }
-
-    fun updateLocation(lat : Double, long : Double, speed : Float, driving : Boolean, numBroadcasts: Int) {
+    fun updateDebugInfo(lat : Double, long : Double, speed : Float, driving : Boolean, numBroadcasts: Int) {
         for(l in listeners) {
-            l.updateSpeed(lat, long, speed, driving, numBroadcasts, numReceives)
+            l.getDebugInfo(lat, long, speed, driving, numBroadcasts, numReceives)
+        }
+    }
+
+    fun updateLocation(lat : Double, long : Double) {
+        for(l in listeners) {
+            l.updateSpeed(lat, long)
         }
     }
 }
