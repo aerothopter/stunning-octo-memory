@@ -7,21 +7,15 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.app.Activity
-import android.content.Context
 import android.content.SharedPreferences
-import android.view.Menu
-import android.widget.CheckBox
-import android.widget.CompoundButton
-import android.widget.CompoundButton.OnCheckedChangeListener
 import android.content.Intent
-import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 
 
-class MainActivity : Activity(), SpeedListener {
+class DebugActivity : Activity(), SpeedListener {
 
     val UNIQUE_REQUEST_FINE_LOCATION_ID = 780917890
     val PREFS_FILENAME = "com.timandzach.stunningoctomemory.prefs"
@@ -37,7 +31,7 @@ class MainActivity : Activity(), SpeedListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_debug)
 
         val quit_button = this.findViewById(R.id.quitButton) as Button
 
