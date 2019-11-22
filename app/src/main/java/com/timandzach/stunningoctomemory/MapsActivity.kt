@@ -67,6 +67,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, SpeedListener {
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+
+        if (intent.getBooleanExtra("EXIT", false)) {
+            finish()
+        }
     }
 
     //If we get permission to access the uesr's location and background location, register to get location updates

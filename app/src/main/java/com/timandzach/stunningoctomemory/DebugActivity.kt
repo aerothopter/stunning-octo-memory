@@ -1,18 +1,12 @@
 package com.timandzach.stunningoctomemory
 
-import android.os.Bundle
-import java.util.Formatter
-import java.util.Locale
-import android.Manifest
-import android.annotation.SuppressLint
-import android.content.pm.PackageManager
 import android.app.Activity
-import android.content.SharedPreferences
 import android.content.Intent
+import android.content.SharedPreferences
+import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
+import java.util.*
 
 
 class DebugActivity : Activity(), SpeedListener {
@@ -53,12 +47,10 @@ class DebugActivity : Activity(), SpeedListener {
     override fun finish() {
         super.finish()
 
-        val serviceIntent = Intent(this, LocationService::class.java)
-        stopService(serviceIntent)
-
-        speedNotifier.unregister(this)
-
-        System.exit(0)
+        val intent = Intent(this, MapsActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+        intent.putExtra("EXIT", true)
+        startActivity(intent)
     }
 
     override fun updateSpeed(latitude: Double, longitude: Double) {
