@@ -20,7 +20,6 @@ class DebugActivity : Activity(), SpeedListener {
     val UNIQUE_REQUEST_FINE_LOCATION_ID = 780917890
     val PREFS_FILENAME = "com.timandzach.stunningoctomemory.prefs"
 
-    var service_running = false
     var prefs: SharedPreferences? = null
 
     var latitude = 0.0
@@ -46,52 +45,9 @@ class DebugActivity : Activity(), SpeedListener {
 
         this.updateSpeed(this.latitude, this.longitude)
 
-        //Check that we have permission to access the user's location. Request that permission if needed
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), UNIQUE_REQUEST_FINE_LOCATION_ID)
-
-            val txtCurrentSpeed = this.findViewById(R.id.txtCurrentSpeed) as TextView
-            txtCurrentSpeed.text = "This application requires access to the user's location"
-            return
-        }
-
-        initSpeedNotifications()
-    }
-
-    //If we get permission to access the uesr's location and background location, register to get location updates
-    @SuppressLint("MissingPermission")
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-
-        var resultIndex = 0
-
-        for (p in permissions) {
-            if (p == Manifest.permission.ACCESS_FINE_LOCATION) {
-                if (grantResults[resultIndex] == PackageManager.PERMISSION_GRANTED) {
-                    initSpeedNotifications()
-
-                    return
-                } else {
-                    val txtCurrentSpeed = this.findViewById(R.id.txtCurrentSpeed) as TextView
-                    txtCurrentSpeed.text = "This application requires access to the user's location"
-                }
-            }
-            else {
-                resultIndex++
-            }
-        }
-    }
-
-    fun initSpeedNotifications () {
-        if (!service_running) {
-            val serviceIntent = Intent(this, LocationService::class.java)
-            startService(serviceIntent)
-
-            speedNotifier = SpeedNotifier(this)
-
-            speedNotifier.register(this)
-
-            service_running = true
-        }
+        // we don't want to restart the service but just register
+        speedNotifier = SpeedNotifier(this)
+        speedNotifier.register(this)
     }
 
     override fun finish() {
@@ -99,8 +55,6 @@ class DebugActivity : Activity(), SpeedListener {
 
         val serviceIntent = Intent(this, LocationService::class.java)
         stopService(serviceIntent)
-
-        service_running = false
 
         speedNotifier.unregister(this)
 
