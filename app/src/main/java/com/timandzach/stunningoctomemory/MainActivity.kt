@@ -35,6 +35,13 @@ class MainActivity : Activity(), SpeedListener {
 
     lateinit var speedNotifier : SpeedNotifier
 
+    /**
+     * Called when the activity is starting.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously
+     * being shut down then this Bundle contains the data it most recently supplied in
+     * OnSaveInstanceState(Bundle). Note: Otherwise it is null.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -50,7 +57,7 @@ class MainActivity : Activity(), SpeedListener {
         this.latitude = Double.fromBits(prefs!!.getLong("latitude",(0.0).toBits()))
         this.longitude = Double.fromBits(prefs!!.getLong("longitude",(0.0).toBits()))
 
-        this.updateSpeed(this.latitude, this.longitude)
+        this.updateLatLong(this.latitude, this.longitude)
 
         //Check that we have permission to access the user's location. Request that permission if needed
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -87,6 +94,10 @@ class MainActivity : Activity(), SpeedListener {
         }
     }
 
+    /**
+     * Start the location service and register for location updates
+     *
+     */
     fun initSpeedNotifications () {
         if (!service_running) {
             val serviceIntent = Intent(this, LocationService::class.java)
@@ -100,6 +111,10 @@ class MainActivity : Activity(), SpeedListener {
         }
     }
 
+    /**
+     * Stop the location service, unregister for location updates, and exit the app
+     *
+     */
     override fun finish() {
         super.finish()
 
@@ -113,7 +128,13 @@ class MainActivity : Activity(), SpeedListener {
         System.exit(0)
     }
 
-    override fun updateSpeed(latitude: Double, longitude: Double) {
+    /**
+     * Updates the latitude and longitude for the activity
+     *
+     * @param latitude The latitude to update
+     * @param longitude The longitude to update
+     */
+    override fun updateLatLong(latitude: Double, longitude: Double) {
         this.latitude = latitude
         this.longitude = longitude
 
@@ -123,7 +144,17 @@ class MainActivity : Activity(), SpeedListener {
         editor.apply()
     }
 
-    override fun getDebugInfo(latitude: Double, longitude: Double, speed : Float, driving : Boolean, numBroadcasts : Int, numReceives : Int) {
+    /**
+     * Sets the debug info to be displayed on the debug screen
+     *
+     * @param latitude The debug latitude
+     * @param longitude The debug longitude
+     * @param speed The debug speed
+     * @param driving The debug flag for if the car is driving
+     * @param numBroadcasts The number of recorded broadcasts
+     * @param numReceives Then number of recorded broadcast receives
+     */
+    override fun setDebugInfo(latitude: Double, longitude: Double, speed : Float, driving : Boolean, numBroadcasts : Int, numReceives : Int) {
         val fmt = Formatter(StringBuilder())
         fmt.format(Locale.US, "%5.6f,%5.6f", latitude, longitude)
         var strCurrentSpeed = fmt.toString()
