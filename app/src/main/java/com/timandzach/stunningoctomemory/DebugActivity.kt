@@ -57,58 +57,11 @@ class MainActivity : Activity(), SpeedListener {
         this.latitude = Double.fromBits(prefs!!.getLong("latitude",(0.0).toBits()))
         this.longitude = Double.fromBits(prefs!!.getLong("longitude",(0.0).toBits()))
 
-        this.updateLatLong(this.latitude, this.longitude)
+        this.updateSpeed(this.latitude, this.longitude)
 
-        //Check that we have permission to access the user's location. Request that permission if needed
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), UNIQUE_REQUEST_FINE_LOCATION_ID)
-
-            val txtCurrentSpeed = this.findViewById(R.id.txtCurrentSpeed) as TextView
-            txtCurrentSpeed.text = "This application requires access to the user's location"
-            return
-        }
-
-        initSpeedNotifications()
-    }
-
-    //If we get permission to access the uesr's location and background location, register to get location updates
-    @SuppressLint("MissingPermission")
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-
-        var resultIndex = 0
-
-        for (p in permissions) {
-            if (p == Manifest.permission.ACCESS_FINE_LOCATION) {
-                if (grantResults[resultIndex] == PackageManager.PERMISSION_GRANTED) {
-                    initSpeedNotifications()
-
-                    return
-                } else {
-                    val txtCurrentSpeed = this.findViewById(R.id.txtCurrentSpeed) as TextView
-                    txtCurrentSpeed.text = "This application requires access to the user's location"
-                }
-            }
-            else {
-                resultIndex++
-            }
-        }
-    }
-
-    /**
-     * Start the location service and register for location updates
-     *
-     */
-    fun initSpeedNotifications () {
-        if (!service_running) {
-            val serviceIntent = Intent(this, LocationService::class.java)
-            startService(serviceIntent)
-
-            speedNotifier = SpeedNotifier(this)
-
-            speedNotifier.register(this)
-
-            service_running = true
-        }
+        // we don't want to restart the service but just register
+        speedNotifier = SpeedNotifier(this)
+        speedNotifier.register(this)
     }
 
     /**
@@ -128,13 +81,7 @@ class MainActivity : Activity(), SpeedListener {
         System.exit(0)
     }
 
-    /**
-     * Updates the latitude and longitude for the activity
-     *
-     * @param latitude The latitude to update
-     * @param longitude The longitude to update
-     */
-    override fun updateLatLong(latitude: Double, longitude: Double) {
+    override fun updateSpeed(latitude: Double, longitude: Double) {
         this.latitude = latitude
         this.longitude = longitude
 
@@ -144,17 +91,7 @@ class MainActivity : Activity(), SpeedListener {
         editor.apply()
     }
 
-    /**
-     * Sets the debug info to be displayed on the debug screen
-     *
-     * @param latitude The debug latitude
-     * @param longitude The debug longitude
-     * @param speed The debug speed
-     * @param driving The debug flag for if the car is driving
-     * @param numBroadcasts The number of recorded broadcasts
-     * @param numReceives Then number of recorded broadcast receives
-     */
-    override fun setDebugInfo(latitude: Double, longitude: Double, speed : Float, driving : Boolean, numBroadcasts : Int, numReceives : Int) {
+    override fun getDebugInfo(latitude: Double, longitude: Double, speed : Float, driving : Boolean, numBroadcasts : Int, numReceives : Int) {
         val fmt = Formatter(StringBuilder())
         fmt.format(Locale.US, "%5.6f,%5.6f", latitude, longitude)
         var strCurrentSpeed = fmt.toString()
