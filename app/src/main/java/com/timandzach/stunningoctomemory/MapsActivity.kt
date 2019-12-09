@@ -122,7 +122,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, SpeedListener {
         System.exit(0)
     }
 
-    override fun updateSpeed(latitude: Double, longitude: Double) {
+    override fun updateLatLong(latitude: Double, longitude: Double) {
         this.latitude = latitude
         this.longitude = longitude
 
@@ -141,7 +141,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, SpeedListener {
 
     }
 
-    override fun getDebugInfo(latitude: Double, longitude: Double, speed : Float, driving : Boolean, numBroadcasts : Int, numReceives : Int) {
+    override fun setDebugInfo(latitude: Double, longitude: Double, speed : Float, driving : Boolean, numBroadcasts : Int, numReceives : Int) {
 
     }
 

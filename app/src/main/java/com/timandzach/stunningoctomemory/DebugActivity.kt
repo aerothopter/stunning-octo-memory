@@ -21,7 +21,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 
 
-class MainActivity : Activity(), SpeedListener {
+class DebugActivity : Activity(), SpeedListener {
 
     val UNIQUE_REQUEST_FINE_LOCATION_ID = 780917890
     val PREFS_FILENAME = "com.timandzach.stunningoctomemory.prefs"
@@ -44,7 +44,7 @@ class MainActivity : Activity(), SpeedListener {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_debug)
 
         val quit_button = this.findViewById(R.id.quitButton) as Button
 
@@ -57,7 +57,7 @@ class MainActivity : Activity(), SpeedListener {
         this.latitude = Double.fromBits(prefs!!.getLong("latitude",(0.0).toBits()))
         this.longitude = Double.fromBits(prefs!!.getLong("longitude",(0.0).toBits()))
 
-        this.updateSpeed(this.latitude, this.longitude)
+        this.updateLatLong(this.latitude, this.longitude)
 
         // we don't want to restart the service but just register
         speedNotifier = SpeedNotifier(this)
@@ -81,7 +81,7 @@ class MainActivity : Activity(), SpeedListener {
         System.exit(0)
     }
 
-    override fun updateSpeed(latitude: Double, longitude: Double) {
+    override fun updateLatLong(latitude: Double, longitude: Double) {
         this.latitude = latitude
         this.longitude = longitude
 
@@ -91,7 +91,7 @@ class MainActivity : Activity(), SpeedListener {
         editor.apply()
     }
 
-    override fun getDebugInfo(latitude: Double, longitude: Double, speed : Float, driving : Boolean, numBroadcasts : Int, numReceives : Int) {
+    override fun setDebugInfo(latitude: Double, longitude: Double, speed : Float, driving : Boolean, numBroadcasts : Int, numReceives : Int) {
         val fmt = Formatter(StringBuilder())
         fmt.format(Locale.US, "%5.6f,%5.6f", latitude, longitude)
         var strCurrentSpeed = fmt.toString()
