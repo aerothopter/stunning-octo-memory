@@ -168,22 +168,22 @@ class LocationService: Service() {
         }
 
         /**
-         * This function is not used
+         * Display the disabled message
          *
-         * @param provider
+         * @param provider This parameter is not used
          */
         override fun onProviderDisabled(provider: String) {
-            //Toast.makeText(applicationContext, "Gps Disabled", Toast.LENGTH_SHORT).show()
+            Toast.makeText(applicationContext, "Gps Disabled", Toast.LENGTH_SHORT).show()
         }
 
 
         /**
-         * This function is not used
+         * Display the enabled message
          *
-         * @param provider
+         * @param provider This parameter is not used
          */
         override fun onProviderEnabled(provider: String) {
-            //Toast.makeText(applicationContext, "Gps Enabled", Toast.LENGTH_SHORT).show()
+            Toast.makeText(applicationContext, "Gps Enabled", Toast.LENGTH_SHORT).show()
         }
     }
 }
