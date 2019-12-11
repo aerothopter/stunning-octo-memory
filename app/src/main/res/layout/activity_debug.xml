@@ -4,6 +4,14 @@
         android:layout_height="fill_parent"
         android:orientation="vertical" >
 
+    <androidx.appcompat.widget.Toolbar
+            android:id="@+id/menu_toolbar"
+            android:minHeight="?attr/actionBarSize"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary">
+    </androidx.appcompat.widget.Toolbar>
+
     <TextView
             android:id="@+id/txtLatLong"
             android:layout_width="wrap_content"

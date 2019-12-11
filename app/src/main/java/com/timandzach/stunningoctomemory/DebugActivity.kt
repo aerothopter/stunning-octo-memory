@@ -35,7 +35,7 @@ class DebugActivity : Activity(), SpeedListener {
         val quit_button = this.findViewById(R.id.quitButton) as Button
 
         quit_button.setOnClickListener( {
-            finish()
+            finish(true)
         })
 
         // setting up the shared preferences file and pulling old values
@@ -54,14 +54,14 @@ class DebugActivity : Activity(), SpeedListener {
      * Stop the location service, unregister for location updates, and exit the app
      *
      */
-    override fun finish() {
+    fun finish(exit: Boolean) {
         super.finish()
 
         speedNotifier.unregister(this)
 
         val intent = Intent(this, MapsActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-        intent.putExtra("EXIT", true)
+        intent.putExtra("EXIT", exit)
         startActivity(intent)
     }
 
