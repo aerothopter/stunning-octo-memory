@@ -1,0 +1,55 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical" >
+
+    <androidx.appcompat.widget.Toolbar
+            android:id="@+id/menu_toolbar"
+            android:minHeight="?attr/actionBarSize"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary">
+    </androidx.appcompat.widget.Toolbar>
+
+    <TextView
+            android:id="@+id/txtLatLong"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00.0 miles/hour"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+            android:id="@+id/txtCurrentSpeed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="000.0 miles/hour"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+            android:id="@+id/txtDriving"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="000.0 miles/hour"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+    <TextView
+            android:id="@+id/txtNumBroadcasts"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="000.0 miles/hour"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+            android:id="@+id/txtNumReceives"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="000.0 miles/hour"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <Button
+            android:id="@+id/quitButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Quit" />
+</LinearLayout>

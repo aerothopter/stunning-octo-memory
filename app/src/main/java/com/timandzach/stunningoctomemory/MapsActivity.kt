@@ -176,7 +176,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, SpeedListener {
         }
 
         R.id.action_settings -> {
-            Toast.makeText(this,"Go To Settings",Toast.LENGTH_SHORT).show()
+            this.startActivity(Intent(this,SettingsActivity::class.java))
+//            Toast.makeText(this,"Go To Settings",Toast.LENGTH_SHORT).show()
             true
         }
 
