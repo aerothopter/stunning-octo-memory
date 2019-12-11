@@ -1,52 +1,49 @@
 package com.timandzach.stunningoctomemory
 
-import android.app.Activity
-import android.content.SharedPreferences
-import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
-import android.widget.TextView
+import android.widget.EditText
+import android.widget.NumberPicker
 import androidx.appcompat.app.AppCompatActivity
-import java.util.*
-import androidx.preference.*
+import android.widget.Toast
+import androidx.core.app.ComponentActivity
+import androidx.core.app.ComponentActivity.ExtraData
+import androidx.core.content.ContextCompat.getSystemService
+import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+import android.view.View
 
 
 class SettingsActivity : AppCompatActivity() {
-
-    val PREFS_FILENAME = "com.timandzach.stunningoctomemory.prefs"
-
-    var prefs: SharedPreferences? = null
-
-    /**
-     * Called when the activity is starting.
-     *
-     * @param savedInstanceState If the activity is being re-initialized after previously
-     * being shut down then this Bundle contains the data it most recently supplied in
-     * OnSaveInstanceState(Bundle). Note: Otherwise it is null.
-     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (supportFragmentManager.findFragmentById(android.R.id.content) == null) {
-            supportFragmentManager
-                .beginTransaction()
-                .replace(android.R.id.content, MySettingsFragment())
-                .commit()
+
+        setContentView(R.layout.activity_settings)
+
+
+        val apply_button = this.findViewById(R.id.apply_settings_button) as Button
+        val update_speed_text = this.findViewById(R.id.update_speed_editText) as NumberPicker
+        val speed_threshold_text = this.findViewById(R.id.speed_threshold_editText) as NumberPicker
+
+        if (update_speed_text != null) {
+            update_speed_text.setMinValue(1)
+            update_speed_text.setMaxValue(10)
+            update_speed_text.setWrapSelectorWheel(true)
+            update_speed_text.setOnValueChangedListener(NumberPicker.OnValueChangeListener { picker, oldVal, newVal ->
+                val text = "Changed from $oldVal to $newVal"
+                Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
+            })
         }
 
-    }
+        if (speed_threshold_text != null) {
+            speed_threshold_text.setMinValue(6)
+            speed_threshold_text.setMaxValue(25)
+            speed_threshold_text.setWrapSelectorWheel(true)
+            speed_threshold_text.setOnValueChangedListener(NumberPicker.OnValueChangeListener { picker, oldVal, newVal ->
+                val text = "Changed from $oldVal to $newVal"
+                Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
+            })
+        }
 
-    /**
-     * Stop the location service, unregister for location updates, and exit the app
-     *
-     */
-    override fun finish() {
-        super.finish()
-
-    }
-}
-
-class MySettingsFragment : PreferenceFragmentCompat() {
-    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        setPreferencesFromResource(R.xml.screen_preferences, rootKey)
+        apply_button.setOnClickListener(View.OnClickListener { Toast.makeText( this, "Apply clicked", Toast.LENGTH_SHORT).show() })
     }
 }
