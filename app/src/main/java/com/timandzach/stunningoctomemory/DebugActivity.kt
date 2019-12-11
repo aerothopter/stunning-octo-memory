@@ -1,16 +1,9 @@
 package com.timandzach.stunningoctomemory
 
 import android.app.Activity
-import android.content.Context
 import android.content.SharedPreferences
-import android.view.Menu
-import android.widget.CheckBox
-import android.widget.CompoundButton
-import android.widget.CompoundButton.OnCheckedChangeListener
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
-import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import java.util.*
@@ -18,10 +11,8 @@ import java.util.*
 
 class DebugActivity : Activity(), SpeedListener {
 
-    val UNIQUE_REQUEST_FINE_LOCATION_ID = 780917890
     val PREFS_FILENAME = "com.timandzach.stunningoctomemory.prefs"
 
-    var service_running = false
     var prefs: SharedPreferences? = null
 
     var latitude = 0.0
@@ -65,6 +56,8 @@ class DebugActivity : Activity(), SpeedListener {
      */
     override fun finish() {
         super.finish()
+
+        speedNotifier.unregister(this)
 
         val intent = Intent(this, MapsActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
