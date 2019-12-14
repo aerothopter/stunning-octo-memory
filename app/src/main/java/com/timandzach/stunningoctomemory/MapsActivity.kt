@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.view.Menu
 import android.widget.TextView
@@ -26,7 +27,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, SpeedListener {
 
     private lateinit var mMap: GoogleMap
 
-    val UNIQUE_REQUEST_FINE_LOCATION_ID = 780917890
+    val UNIQUE_REQUEST_FINE_LOCATION_ID = 7809
     val PREFS_FILENAME = "com.timandzach.stunningoctomemory.prefs"
 
     var service_running = false
@@ -36,8 +37,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, SpeedListener {
     var longitude = 0.0
 
     private lateinit var parkingMarker: Marker
-
-    lateinit var speedNotifier : SpeedNotifier
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,8 +54,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, SpeedListener {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), UNIQUE_REQUEST_FINE_LOCATION_ID)
 
-            val txtCurrentSpeed = this.findViewById(R.id.txtCurrentSpeed) as TextView
-            txtCurrentSpeed.text = "This application requires access to the user's location"
+            val txtCurrentSpeed = this.findViewById(R.id.txtCurrentSpeed) as TextView?
+            if (txtCurrentSpeed != null) {
+                txtCurrentSpeed.text = "This application requires access to the user's location"
+            }
             return
         }
 
@@ -99,11 +100,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, SpeedListener {
     fun initSpeedNotifications () {
         if (!service_running) {
             val serviceIntent = Intent(this, LocationService::class.java)
+            serviceIntent.putExtra("UpdateSpeed", 1000)
             startService(serviceIntent)
 
-            speedNotifier = SpeedNotifier(this)
+            //speedNotifier = SpeedNotifier(this)
+            val filter = IntentFilter(LocationService.BROADCAST_ACTION)
+            this.registerReceiver(SpeedNotifier.instance, filter)
 
-            speedNotifier.register(this)
+            SpeedNotifier.instance.register(this)
 
             service_running = true
         }
@@ -117,7 +121,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, SpeedListener {
 
         service_running = false
 
-        speedNotifier.unregister(this)
+        SpeedNotifier.instance.unregister(this)
 
         System.exit(0)
     }

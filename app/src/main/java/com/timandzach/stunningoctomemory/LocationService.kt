@@ -27,7 +27,10 @@ class LocationService: Service() {
     }
 
     // A random number used when starting the foreground service
-    val UNIQUE_NOTIFICATION_ID = 54178
+    val UNIQUE_NOTIFICATION_ID = 541784
+
+    // The default speed to receive location updates
+    val DEFAULT_UPDATE_SPEED = 1000
 
 
     lateinit var locationManager: LocationManager
@@ -112,7 +115,11 @@ class LocationService: Service() {
             return
         }
 
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0f, listener)
+        val updateSpeed = intent.getIntExtra("UpdateSpeed", DEFAULT_UPDATE_SPEED)
+        Log.i("*****", "Update Speed = " + updateSpeed)
+
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, updateSpeed.toLong(),
+            0f, listener)
     }
 
     /**
@@ -143,10 +150,8 @@ class LocationService: Service() {
         var numBroadcasts = 0
 
         override fun onLocationChanged(loc: Location) {
-            Log.i("*****", "Location changed")
+            //Log.i("*****", "Location changed")
 
-             loc.latitude
-             loc.longitude
              intent.putExtra("Latitude", loc.latitude)
              intent.putExtra("Longitude", loc.longitude)
              intent.putExtra("Speed", loc.speed)
