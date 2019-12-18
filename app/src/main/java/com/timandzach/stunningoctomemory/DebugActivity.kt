@@ -47,8 +47,10 @@ class DebugActivity : Activity(), SpeedListener {
     }
 
     /**
-     * Stop the location service, unregister for location updates, and exit the app
+     * Called when the activity is exited. Since this is likely not the root activity,
+     * We instead switch to the MapsActivity with a specific flag to tell it to close.
      *
+     * @param exit Whether or not to trigger the app exit.
      */
     fun finish(exit: Boolean) {
         super.finish()
@@ -61,6 +63,13 @@ class DebugActivity : Activity(), SpeedListener {
         startActivity(intent)
     }
 
+    /**
+     * Callback function provided to SpeedNotifier when there is an update available.
+     * Updates the stored latitude and longitude and writes to the SharedPreferences file.
+     *
+     * @param latitude The new position's latitude
+     * @param longitude The new position's longitude
+     */
     override fun updateLatLong(latitude: Double, longitude: Double) {
         this.latitude = latitude
         this.longitude = longitude
@@ -71,6 +80,16 @@ class DebugActivity : Activity(), SpeedListener {
         editor.apply()
     }
 
+    /**
+     * Called alongside updateLatLong(Double, Double). Prints debug information to the screen.
+     *
+     * @param latitude The new position's latitude.
+     * @param longitude The new position's longitude.
+     * @param speed The device's new speed, in miles per hour.
+     * @param driving Whether or not the device is considered "driving," based on speed thresholds
+     * @param numBroadcasts The number of service broadcasts to report
+     * @param numReceives The number of received broadcasts from this SpeedNotifier
+     */
     override fun setDebugInfo(latitude: Double, longitude: Double, speed : Float, driving : Boolean, numBroadcasts : Int, numReceives : Int) {
         val fmt = Formatter(StringBuilder())
         fmt.format(Locale.US, "%5.6f,%5.6f", latitude, longitude)

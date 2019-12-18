@@ -38,6 +38,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, SpeedListener {
 
     private lateinit var parkingMarker: Marker
 
+    /**
+     * Called when the activity is starting.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously
+     * being shut down then this Bundle contains the data it most recently supplied in
+     * OnSaveInstanceState(Bundle). Note: Otherwise it is null.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -74,6 +81,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, SpeedListener {
         }
     }
 
+
+    /**
+     * Callback for the result from requesting permissions. This method is invoked for
+     * every call on requestPermissions(android.app.Activity, String[], int).
+     *
+     * @param requestCode The request code passed in requestPermissions().
+     * @param permissions The requested permissions. Never null.
+     * @param grantResults The grant results for the corresponding permissions
+     * which is either PERMISSION_GRANTED or PERMISSION_DENIED. Never null.
+     */
     //If we get permission to access the uesr's location and background location, register to get location updates
     @SuppressLint("MissingPermission")
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -97,6 +114,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, SpeedListener {
         }
     }
 
+    /**
+     * Initializes the LocationService and registers this activity with SpeedNotifier,
+     * if the service is not already running.
+     *
+     */
+
     fun initSpeedNotifications () {
         if (!service_running) {
             val serviceIntent = Intent(this, LocationService::class.java)
@@ -113,6 +136,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, SpeedListener {
         }
     }
 
+    /**
+     * Called when the activity is exited. Since this is the root activity,
+     * this closes active services as well.
+     *
+     */
+
     override fun finish() {
         super.finish()
 
@@ -126,6 +155,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, SpeedListener {
         System.exit(0)
     }
 
+    /**
+     * Callback function provided to SpeedNotifier when there is an update available.
+     * Updates the stored latitude and longitude, and moves the marker if necessary.
+     *
+     * @param latitude The new position's latitude
+     * @param longitude The new position's longitude
+     */
     override fun updateLatLong(latitude: Double, longitude: Double) {
         this.latitude = latitude
         this.longitude = longitude
@@ -144,7 +180,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, SpeedListener {
         }
 
     }
-
+    /**
+     * Stub function used in order to implement SpeedListener interface. Not used.
+     *
+     * @param latitude The new position's latitude.
+     * @param longitude The new position's longitude.
+     * @param speed The device's new speed, in miles per hour.
+     * @param driving Whether or not the device is considered "driving," based on speed thresholds
+     * @param numBroadcasts The number of service broadcasts to report
+     * @param numReceives The number of received broadcasts from this SpeedNotifier
+     */
     override fun setDebugInfo(latitude: Double, longitude: Double, speed : Float, driving : Boolean, numBroadcasts : Int, numReceives : Int) {
 
     }
@@ -152,11 +197,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, SpeedListener {
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
+     *
+     * @param googleMap The map to be used.
      */
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
@@ -168,10 +210,23 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, SpeedListener {
 
     }
 
+    /**
+     * Initialize the contents of the Activity's standard options menu.
+     *
+     * @param menu The options menu in which you place your items.
+     * @return Whether or not to display the menu.
+     */
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
         return super.onCreateOptionsMenu(menu)
     }
+
+    /**
+     * Called when an item in the options menu is selected.
+     *
+     * @param item The menu item that was selected. This value must never be null.
+     * @return Whether or not to continue with normal event processing.
+     */
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.action_debug -> {
