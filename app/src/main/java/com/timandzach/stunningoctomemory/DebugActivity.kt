@@ -18,9 +18,6 @@ class DebugActivity : Activity(), SpeedListener {
     var latitude = 0.0
     var longitude = 0.0
 
-
-    lateinit var speedNotifier : SpeedNotifier
-
     /**
      * Called when the activity is starting.
      *
@@ -46,8 +43,7 @@ class DebugActivity : Activity(), SpeedListener {
         this.updateLatLong(this.latitude, this.longitude)
 
         // we don't want to restart the service but just register
-        speedNotifier = SpeedNotifier(this)
-        speedNotifier.register(this)
+        SpeedNotifier.instance.register(this)
     }
 
     /**
@@ -57,7 +53,7 @@ class DebugActivity : Activity(), SpeedListener {
     fun finish(exit: Boolean) {
         super.finish()
 
-        speedNotifier.unregister(this)
+        SpeedNotifier.instance.unregister(this)
 
         val intent = Intent(this, MapsActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP

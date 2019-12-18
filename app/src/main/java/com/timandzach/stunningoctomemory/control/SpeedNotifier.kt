@@ -6,17 +6,22 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.util.Log
 
 /**
- * SpeedNotifier registers listeners, and notifies those listeners with relevant speed change info
- *
+ * SpeedNotifier is a singleton that registers listeners, and notifies those listeners with
+ * relevant speed change info
  */
-class SpeedNotifier : BroadcastReceiver {
+class SpeedNotifier : BroadcastReceiver() {
 
-    constructor(act : Activity) : super()  {
-        val filter : IntentFilter = IntentFilter(LocationService.BROADCAST_ACTION)
-        act.registerReceiver(this, filter)
+    companion object {
+        val instance = SpeedNotifier()
     }
+
+    /*constructor(act: Activity) : super() {
+        val filter: IntentFilter = IntentFilter(LocationService.BROADCAST_ACTION)
+        act.registerReceiver(this, filter)
+    }*/
 
     //Counts the number of broadcasts received
     var numReceives = 0
@@ -61,7 +66,7 @@ class SpeedNotifier : BroadcastReceiver {
     override fun onReceive(context: Context?, intent: Intent?) {
 
         if (intent != null) {
-            if(intent.action == LocationService.BROADCAST_ACTION ) {
+            if (intent.action == LocationService.BROADCAST_ACTION) {
                 val lat = intent.getDoubleExtra("Latitude", 0.0)
                 val lon = intent.getDoubleExtra("Longitude", 0.0)
                 val speed = intent.getFloatExtra("Speed", 0.0f)
@@ -78,10 +83,10 @@ class SpeedNotifier : BroadcastReceiver {
     var carIsDriving = false
 
     //If speed is higher than this threshold we consider the car to be driving
-    val SPEED_THRESHOLD = 6f
+    var speedThreshold = 6
 
     //If the speed is lower than this threshold we consider the car to be stopped
-    val STOPPED_SPEED = 0.05f
+    var stoppedSpeed = 1
 
     /**
      * Called when a location update is received. Updates debug info always,
@@ -93,19 +98,26 @@ class SpeedNotifier : BroadcastReceiver {
      * @param numBroadcasts The number of broadcasts the location service has made. Used for
      *                      debugging
      */
-    fun onLocationChanged(latitude : Double, longitude : Double, speed : Float, numBroadcasts : Int) {
-            //If the vehicle was driving and has stopped, report the location
-            if(carIsDriving && speed <= STOPPED_SPEED) {
-                updateLocation(latitude, longitude)
-                carIsDriving = false
-            }
+    fun onLocationChanged(
+        latitude: Double,
+        longitude: Double,
+        speed: Float,
+        numBroadcasts: Int
+    ) {
+        //If the vehicle was driving and has stopped, report the location
+        if (carIsDriving && speed <= stoppedSpeed) {
+            updateLocation(latitude, longitude)
+            carIsDriving = false
+        }
 
-            //If the vehicle was stopped, but has started driving
-            if (!carIsDriving && speed > SPEED_THRESHOLD) {
-                carIsDriving = true
-            }
+        //If the vehicle was stopped, but has started driving
+        if (!carIsDriving && speed > speedThreshold) {
+            carIsDriving = true
+        }
 
         updateDebugInfo(latitude, longitude, speed, carIsDriving, numBroadcasts)
+
+        Log.i("*****", "Speed Threshold = " + speedThreshold + " Stop Threshold" + stoppedSpeed)
     }
 
     //The list of listeners that have registered for location updates
@@ -116,7 +128,7 @@ class SpeedNotifier : BroadcastReceiver {
      *
      * @param listener The listener to register
      */
-    fun register(listener : SpeedListener) {
+    fun register(listener: SpeedListener) {
         listeners.add(listener)
     }
 
@@ -138,8 +150,14 @@ class SpeedNotifier : BroadcastReceiver {
      * @param driving Whether the application is considered to be driving
      * @param numBroadcasts The number of broadcasts to report
      */
-    fun updateDebugInfo(lat : Double, long : Double, speed : Float, driving : Boolean, numBroadcasts: Int) {
-        for(l in listeners) {
+    fun updateDebugInfo(
+        lat: Double,
+        long: Double,
+        speed: Float,
+        driving: Boolean,
+        numBroadcasts: Int
+    ) {
+        for (l in listeners) {
             l.setDebugInfo(lat, long, speed, driving, numBroadcasts, numReceives)
         }
     }
@@ -150,8 +168,8 @@ class SpeedNotifier : BroadcastReceiver {
      * @param lat The new latitude to report
      * @param long The new longitude to report
      */
-    fun updateLocation(lat : Double, long : Double) {
-        for(l in listeners) {
+    fun updateLocation(lat: Double, long: Double) {
+        for (l in listeners) {
             l.updateLatLong(lat, long)
         }
     }
