@@ -30,7 +30,7 @@ class LocationService: Service() {
     val UNIQUE_NOTIFICATION_ID = 541784
 
     // The default speed to receive location updates
-    val DEFAULT_UPDATE_SPEED = 1000
+    val DEFAULT_UPDATE_SPEED = 10000
 
 
     lateinit var locationManager: LocationManager

@@ -1,5 +1,6 @@
 package com.timandzach.stunningoctomemory
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.NumberPicker
@@ -9,6 +10,8 @@ import android.view.View
 
 
 class SettingsActivity : AppCompatActivity() {
+    val ONE_MINUTE = 60000
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -46,6 +49,16 @@ class SettingsActivity : AppCompatActivity() {
 
             SpeedNotifier.instance.speedThreshold = speed_threshold_picker.value
             SpeedNotifier.instance.stoppedSpeed = stop_threshold_picker.value
+
+            restartSpeedNotifications(ONE_MINUTE / update_speed_picker.value)
         })
+    }
+
+    fun restartSpeedNotifications(updateInterval : Int) {
+        val serviceIntent = Intent(this, LocationService::class.java)
+        stopService(serviceIntent)
+
+        serviceIntent.putExtra("UpdateSpeed", updateInterval)
+        startService(serviceIntent)
     }
 }

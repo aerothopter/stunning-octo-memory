@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.util.Log
 
 /**
  * SpeedNotifier is a singleton that registers listeners, and notifies those listeners with
@@ -115,6 +116,8 @@ class SpeedNotifier : BroadcastReceiver() {
         }
 
         updateDebugInfo(latitude, longitude, speed, carIsDriving, numBroadcasts)
+
+        Log.i("*****", "Speed Threshold = " + speedThreshold + " Stop Threshold" + stoppedSpeed)
     }
 
     //The list of listeners that have registered for location updates
